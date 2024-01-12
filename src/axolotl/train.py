@@ -141,6 +141,8 @@ def train(
         if hasattr(module, "_post_training"):
             module._post_training(model, name)  # pylint: disable=protected-access
 
+    LOG.info("Post-training complete. Saving model and tokenizer.")
+
     if trainer.is_fsdp_enabled:
         trainer.accelerator.state.fsdp_plugin.set_state_dict_type("FULL_STATE_DICT")
         LOG.info("Set FSDP state dict type to FULL_STATE_DICT for saving.")
@@ -155,6 +157,7 @@ def train(
     # TODO do we need this fix? https://huggingface.co/docs/accelerate/usage_guides/fsdp#saving-and-loading
     # only save on rank 0, otherwise it corrupts output on multi-GPU when multiple processes attempt to write the same file
     if cfg.fsdp:
+        LOG.info("Saving model with FSDP state dict type FULL_STATE_DICT.")
         trainer.save_model(cfg.output_dir)
     elif cfg.deepspeed and is_deepspeed_zero3_enabled():
         # Copied over from: https://github.com/huggingface/accelerate/blob/5ae611118057232f441055f7ef9ba0b0f2b8d533/docs/source/usage_guides/deepspeed.md#saving-and-loading
@@ -176,6 +179,7 @@ def train(
         if cfg.flash_optimum:
             model = BetterTransformer.reverse(model)
 
+        LOG.info(f"Saving pretrained model to {cfg.output_dir}")
         model.save_pretrained(cfg.output_dir, safe_serialization=safe_serialization)
 
     if not cfg.hub_model_id:
@@ -184,6 +188,7 @@ def train(
         # defensively push to the hub to ensure the model card is updated
         trainer.push_to_hub()
 
+    LOG.info(f"Returning model and tokenizer")
     return model, tokenizer
 
 
