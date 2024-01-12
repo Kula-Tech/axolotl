@@ -62,6 +62,7 @@ DEFAULT_LOGGING_CONFIG: Dict[str, Any] = {
             "propagate": False,
         },
     },
+    "disable_existing_loggers": False,
 }
 
 
