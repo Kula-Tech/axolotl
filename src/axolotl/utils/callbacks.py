@@ -488,13 +488,13 @@ def log_prediction_callback_factory(trainer: Trainer, tokenizer):
                             pred_step_token_ids_list.append(pred_step_token_ids)
 
                     prompt_texts = tokenizer.batch_decode(
-                        prompt_token_ids_list, skip_special_tokens=True
+                        prompt_token_ids_list, skip_special_tokens=False
                     )
                     completion_texts = tokenizer.batch_decode(
-                        completion_token_ids_list, skip_special_tokens=True
+                        completion_token_ids_list, skip_special_tokens=False
                     )
                     pred_step_texts = tokenizer.batch_decode(
-                        pred_step_token_ids_list, skip_special_tokens=True
+                        pred_step_token_ids_list, skip_special_tokens=False
                     )
 
                     with torch.no_grad():
@@ -518,7 +518,7 @@ def log_prediction_callback_factory(trainer: Trainer, tokenizer):
                         )
 
                     predicted_texts = tokenizer.batch_decode(
-                        prediction_without_prompt_tokens_list, skip_special_tokens=True
+                        prediction_without_prompt_tokens_list, skip_special_tokens=False
                     )
 
                     for (
